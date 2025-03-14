@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Math Puzzle Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #d9e4e9;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        #puzzle {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px;
+        }
+
+        input {
+            font-size: 18px;
+            padding: 5px;
+            text-align: center;
+        }
+
+        button {
+            height: 30px;
+            border-radius: 11px;
+
+        }
+
+        #timer,
+        #question-timer {
+            font-size: 20px;
+            color: red;
+        }
+
+        #game-over {
+            font-size: 24px;
+            font-weight: bold;
+            color: blue;
+            margin-top: 20px;
+            display: none;
+        }
+
+        div#score {
+            line-height: 45px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Countdown Math Puzzle Game</h1>
+        <div id="timer">Total Time Left: 60s</div>
+        <div id="question-timer">Question Time Left: 10s</div>
+        <div id="puzzle"></div>
+        <input type="number" id="answer" placeholder="Your Answer">
+        <button onclick="checkAnswer()">Submit</button>
+        <div id="score">Score: 0</div>
+        <button onclick="startGame()">Start Game</button>
+        <div id="game-over"></div>
+    </div>
+
+    <script>
+        let totalTime = 60;
+        let questionTime = 10;
+        let currentPuzzle;
+        let score = 0;
+        let questionCount = 0;
+        let maxQuestions = 5;
+        let totalTimer, questionTimer;
+        let gameActive = false;
+
+        function generatePuzzle() {
+            if (questionCount >= maxQuestions) {
+                endGame();
+                return;
+            }
+            questionCount++;
+            let num1 = Math.floor(Math.random() * 10) + 1;
+            let num2 = Math.floor(Math.random() * 10) + 1;
+            let operators = ['+', '-', '*'];
+            let operator = operators[Math.floor(Math.random() * operators.length)];
+            currentPuzzle = {
+                question: `${num1} ${operator} ${num2}`,
+                answer: eval(`${num1} ${operator} ${num2}`)
+            };
+            document.getElementById("puzzle").innerText = currentPuzzle.question;
+            document.getElementById("answer").value = "";
+            resetQuestionTimer();
+        }
+
+        function checkAnswer() {
+            if (!gameActive) return;
+            let userAnswer = document.getElementById("answer").value;
+            if (parseInt(userAnswer) === currentPuzzle.answer) {
+                score++;
+                document.getElementById("score").innerText = `Score: ${score}`;
+            }
+            if (questionCount >= maxQuestions) {
+                endGame();
+            } else {
+                generatePuzzle();
+            }
+        }
+
+        function resetQuestionTimer() {
+            questionTime = 10;
+            clearInterval(questionTimer);
+            document.getElementById("question-timer").innerText = `Question Time Left: ${questionTime}s`;
+            questionTimer = setInterval(() => {
+                questionTime--;
+                document.getElementById("question-timer").innerText = `Question Time Left: ${questionTime}s`;
+                if (questionTime <= 0) {
+                    if (questionCount >= maxQuestions) {
+                        endGame();
+                    } else {
+                        generatePuzzle();
+                    }
+                }
+            }, 1000);
+        }
+
+        function startGame() {
+            score = 0;
+            questionCount = 0;
+            totalTime = 60;
+            gameActive = true;
+            document.getElementById("score").innerText = "Score: 0";
+            document.getElementById("timer").innerText = `Total Time Left: ${totalTime}s`;
+            document.getElementById("game-over").style.display = "none";
+            generatePuzzle();
+
+            totalTimer = setInterval(() => {
+                totalTime--;
+                document.getElementById("timer").innerText = `Total Time Left: ${totalTime}s`;
+                if (totalTime <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            gameActive = false;
+            clearInterval(totalTimer);
+            clearInterval(questionTimer);
+            document.getElementById("game-over").innerText = `Game Over! Your Score: ${score}`;
+            document.getElementById("game-over").style.display = "block";
+        }
+    </script>
+</body>
+
+</html>
