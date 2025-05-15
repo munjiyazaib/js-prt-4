@@ -116,20 +116,30 @@
                 answer: eval(`${num1} ${operator} ${num2}`)
             };
 
+            console.log(`Generated Puzzle: ${currentPuzzle.question} = ${currentPuzzle.answer}`);
             document.getElementById("puzzle").innerText = currentPuzzle.question;
             document.getElementById("answer").value = "";
         }
 
         function checkAnswer() {
-            if (!gameActive) return;
+            if (!gameActive) {
+                console.log("Attempted answer but game is not active.");
+                return;
+            }
 
             let userAnswer = document.getElementById("answer").value;
+            console.log(`User Answer: ${userAnswer}, Correct Answer: ${currentPuzzle.answer}`);
+
             if (parseInt(userAnswer) === currentPuzzle.answer) {
                 score++;
+                console.log("Correct answer!");
                 document.getElementById("score").innerText = `Score: ${score}`;
+            } else {
+                console.log("Wrong answer.");
             }
 
             questionCount++;
+            console.log(`Questions Attempted: ${questionCount}`);
             generatePuzzle();
         }
 
@@ -139,6 +149,7 @@
             totalTime = 60;
             gameActive = true;
 
+            console.log("Game started.");
             document.getElementById("score").innerText = "Score: 0";
             document.getElementById("timer").innerText = `Time Left: ${totalTime}s`;
             document.getElementById("game-over").style.display = "none";
@@ -149,6 +160,7 @@
                 if (totalTime > 0) {
                     totalTime--;
                     document.getElementById("timer").innerText = `Time Left: ${totalTime}s`;
+                    console.log(`Time Left: ${totalTime}s`);
                 } else {
                     endGame();
                 }
@@ -160,8 +172,12 @@
             clearInterval(totalTimer);
             document.getElementById("game-over").innerText = `Game Over! Your Score: ${score} | Questions Attempted: ${questionCount}`;
             document.getElementById("game-over").style.display = "block";
-            document.getElementById("timer").innerText = `Time Left: ${totalTime}s`; // Keep final time frozen
+            document.getElementById("timer").innerText = `Time Left: ${totalTime}s`;
+            console.log("Game over.");
+            console.log(`Final Score: ${score}`);
+            console.log(`Questions Attempted: ${questionCount}`);
         }
+
 
     </script>
 </body>
